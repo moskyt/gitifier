@@ -13,6 +13,7 @@ class Repo
 
     @img_ok = NSImage.new.initWithContentsOfFile 'accept.png'
     @img_dirty = NSImage.new.initWithContentsOfFile 'cancel.png'
+    @img_error = NSImage.new.initWithContentsOfFile 'error.png'
     @img_push = NSImage.new.initWithContentsOfFile 'drive_add.png'
     @img_pull = NSImage.new.initWithContentsOfFile 'drive_delete.png'
   end
@@ -22,21 +23,28 @@ class Repo
   end
   
   def pull
+    puts "Pulling #{name}"
     Dir.chdir(@dir) do
       `git pull`
     end
   end
   
   def push
+    puts "Pushing #{name}"
     Dir.chdir(@dir) do
-      `git push`
+      r = `git push`
+      if r.include?('[rejected]')
+        @error = 'merge'
+      end
     end
   end
 
   
   def update
     return unless @menu_item
-    if !clean?
+    if @error
+      @menu_item.setImage @img_error
+    elsif !clean?
       @menu_item.setImage @img_dirty
     elsif needs_to_pull?
       @menu_item.setImage @img_pull
@@ -47,7 +55,15 @@ class Repo
     end
   end
   
+  def fetch
+    puts "Fetching #{name}"
+    Dir.chdir(@dir) do
+      `git fetch --all`
+    end
+  end
+  
   def proceed
+    @error = nil
     if clean?
       pull if needs_to_pull?
       push if needs_to_push?
@@ -80,11 +96,13 @@ class Repo
 end
 
 def load_repos
+  puts "Loading repos"
   @repos = []
   @repo_paths.each do |p|
+    puts "Inspecting #{p} ..."
     Dir["#{p}/*"].each do |d|
       if File.directory?(d) and File.exist?(File.join(d, '.git'))
-        puts File.basename(d)
+        puts "  - found #{File.basename(d)}"
         @repos << Repo.new(d)
       end
     end
