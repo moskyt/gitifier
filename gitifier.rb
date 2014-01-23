@@ -149,14 +149,14 @@ def initStatusBar(menu)
 end
 
 # Menu Item Actions
-def sayHello(sender)
-    alert = NSAlert.new
-    alert.messageText = 'This is MacRuby Status Bar Application'
-    alert.informativeText = 'Cool, huh?'
-    alert.alertStyle = NSInformationalAlertStyle
-    alert.addButtonWithTitle("Yeah!")
-    response = alert.runModal
-end
+# def sayHello(sender)
+#     alert = NSAlert.new
+#     alert.messageText = 'This is MacRuby Status Bar Application'
+#     alert.informativeText = 'Cool, huh?'
+#     alert.alertStyle = NSInformationalAlertStyle
+#     alert.addButtonWithTitle("Yeah!")
+#     response = alert.runModal
+# end
 
 def proceed(sender)
   @repos[sender.representedObject.to_i].proceed  
@@ -164,6 +164,10 @@ end
 
 def updateRepos(sender)
   @repos.each(&:update)
+end
+
+def fetchRepos(sender)
+  @repos.each(&:fetch)
 end
 
 def quit(sender)
@@ -189,4 +193,5 @@ app = NSApplication.sharedApplication
 initStatusBar(setupMenu)
 updateRepos(nil)
 NSTimer.scheduledTimerWithTimeInterval 0.5, target: self, selector: 'updateRepos:', userInfo: nil, repeats: true
+NSTimer.scheduledTimerWithTimeInterval 15, target: self, selector: 'fetchRepos:', userInfo: nil, repeats: true
 app.run
