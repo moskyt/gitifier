@@ -162,12 +162,16 @@ def proceed(sender)
   @repos[sender.representedObject.to_i].proceed  
 end
 
-def updateRepos(sender)
-  @repos.each(&:update)
+def fetchRepos(sender)
+  @fetch_index ||= 0
+  @fetch_index += 1
+  @repos[@fetch_index % @repos.size].fetch
 end
 
-def fetchRepos(sender)
-  @repos.each(&:fetch)
+def updateRepos(sender)
+  @update_index ||= 0
+  @update_index += 1
+  @repos[@update_index % @repos.size].update
 end
 
 def quit(sender)
@@ -191,7 +195,7 @@ load_repos
 
 app = NSApplication.sharedApplication
 initStatusBar(setupMenu)
-updateRepos(nil)
-NSTimer.scheduledTimerWithTimeInterval 0.5, target: self, selector: 'updateRepos:', userInfo: nil, repeats: true
+@repos.each(&:update)
+NSTimer.scheduledTimerWithTimeInterval 1, target: self, selector: 'updateRepos:', userInfo: nil, repeats: true
 NSTimer.scheduledTimerWithTimeInterval 15, target: self, selector: 'fetchRepos:', userInfo: nil, repeats: true
 app.run
