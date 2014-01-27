@@ -107,6 +107,7 @@ def load_repos
       end
     end
   end
+  @repos = @repos.sort_by{|r| r.name}
 end
 
 # We build the status bar item menu
@@ -188,6 +189,7 @@ end
 def reload(sender)
   load_config
   load_repos
+  initStatusBar(setupMenu)
 end
 
 load_config
