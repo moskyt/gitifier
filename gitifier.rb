@@ -95,6 +95,13 @@ class Repo
     
 end
 
+def pull_all(sender)
+  @repos.each do |r|
+    r.fetch
+    r.pull
+  end
+end
+
 def load_repos
   puts "Loading repos"
   @repos = []
@@ -126,10 +133,16 @@ def setupMenu
   end
 
   mi = NSMenuItem.new
-  mi.title = 'Reload cfg&repos'
-  mi.action = 'reload:'
+  mi.title = "Pull'n'fetch"
+  mi.action = 'pull_all:'
   mi.target = self
   menu.addItem mi
+
+  # mi = NSMenuItem.new
+  # mi.title = 'Reload cfg&repos'
+  # mi.action = 'reload:'
+  # mi.target = self
+  # menu.addItem mi
 
   mi = NSMenuItem.new
   mi.title = 'Quit'
