@@ -118,10 +118,7 @@ def load_repos
 end
 
 # We build the status bar item menu
-def setupMenu
-  menu = NSMenu.new
-  menu.initWithTitle 'Gitifier'
-  
+def setupMenu(menu)  
   @repos.each_with_index do |r, ri| 
     mi = NSMenuItem.new
     mi.title = r.name
@@ -202,14 +199,17 @@ end
 def reload(sender)
   load_config
   load_repos
-  initStatusBar(setupMenu)
+  #initStatusBar(setupMenu)
 end
 
 load_config
 load_repos
 
 app = NSApplication.sharedApplication
-initStatusBar(setupMenu)
+@menu = NSMenu.new
+@menu.initWithTitle 'Gitifier'
+setupMenu(@menu)
+initStatusBar(@menu)
 @repos.each(&:update)
 NSTimer.scheduledTimerWithTimeInterval 1, target: self, selector: 'updateRepos:', userInfo: nil, repeats: true
 NSTimer.scheduledTimerWithTimeInterval 15, target: self, selector: 'fetchRepos:', userInfo: nil, repeats: true
