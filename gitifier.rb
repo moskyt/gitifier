@@ -119,6 +119,9 @@ end
 
 # We build the status bar item menu
 def setupMenu(menu)  
+  while menu.itemArray.size > 0
+    menu.removeItem menu.itemArray.first
+  end
   @repos.each_with_index do |r, ri| 
     mi = NSMenuItem.new
     mi.title = r.name
@@ -135,11 +138,11 @@ def setupMenu(menu)
   mi.target = self
   menu.addItem mi
 
-  # mi = NSMenuItem.new
-  # mi.title = 'Reload cfg&repos'
-  # mi.action = 'reload:'
-  # mi.target = self
-  # menu.addItem mi
+  mi = NSMenuItem.new
+  mi.title = 'Reload cfg&repos'
+  mi.action = 'reload:'
+  mi.target = self
+  menu.addItem mi
 
   mi = NSMenuItem.new
   mi.title = 'Quit'
@@ -199,7 +202,7 @@ end
 def reload(sender)
   load_config
   load_repos
-  #initStatusBar(setupMenu)
+  setupMenu(@menu)
 end
 
 load_config
