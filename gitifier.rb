@@ -41,6 +41,7 @@ class Repo
 
   def update
     return unless @menu_item
+    git_status
     if @error
       @menu_item.setImage @img_error
     elsif !clean?
@@ -75,21 +76,24 @@ class Repo
   end
   
   def git_status
-    Dir.chdir(@dir) do
+    @git_status = Dir.chdir(@dir) do
       `git status`
     end
   end
   
   def clean?
-    git_status.include? 'nothing to commit, working directory clean'
+    @git_status || git_status
+    @git_status.include? 'nothing to commit, working directory clean'
   end
   
   def needs_to_pull?
-    git_status.include? 'branch is behind'
+    @git_status || git_status
+    @git_status.include? 'branch is behind'
   end
   
   def needs_to_push?
-    git_status.include? 'branch is ahead'
+    @git_status || git_status
+    @git_status.include? 'branch is ahead'
   end
     
 end
@@ -225,6 +229,6 @@ app = NSApplication.sharedApplication
 setupMenu(@menu)
 initStatusBar(@menu)
 @repos.each(&:update)
-NSTimer.scheduledTimerWithTimeInterval 1, target: self, selector: 'updateRepos:', userInfo: nil, repeats: true
+NSTimer.scheduledTimerWithTimeInterval  2, target: self, selector: 'updateRepos:', userInfo: nil, repeats: true
 NSTimer.scheduledTimerWithTimeInterval 15, target: self, selector: 'fetchRepos:', userInfo: nil, repeats: true
 app.run
