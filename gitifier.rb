@@ -39,7 +39,6 @@ class Repo
     end
   end
 
-  
   def update
     return unless @menu_item
     if @error
@@ -99,7 +98,12 @@ def pull_all(sender)
   @repos.each do |r|
     r.fetch
     r.pull
+    r.update
   end
+end
+
+def update_all(sender)
+  @repos.each(&:update)
 end
 
 def load_repos
@@ -135,6 +139,12 @@ def setupMenu(menu)
   mi = NSMenuItem.new
   mi.title = "Pull'n'fetch"
   mi.action = 'pull_all:'
+  mi.target = self
+  menu.addItem mi
+
+  mi = NSMenuItem.new
+  mi.title = "Refresh"
+  mi.action = 'update_all:'
   mi.target = self
   menu.addItem mi
 
@@ -203,6 +213,7 @@ def reload(sender)
   load_config
   load_repos
   setupMenu(@menu)
+  @repos.each(&:update)
 end
 
 load_config
