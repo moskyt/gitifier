@@ -170,7 +170,7 @@ end
 # Init the status bar
 def initStatusBar(menu)
   status_bar = NSStatusBar.systemStatusBar
-  status_item = status_bar.statusItemWithLength(NSVariableStatusItemLength)
+  status_item = status_bar.statusItemWithLength((defined?("NSVariableStatusItemLength") ? Kernel.const_get("NSVariableStatusItemLength") : -1 rescue -1))
   status_item.setMenu menu 
   img = NSImage.new.initWithContentsOfFile 'bug.png'
   status_item.setImage(img)
