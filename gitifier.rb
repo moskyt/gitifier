@@ -77,6 +77,7 @@ class Repo
   
   def git_status
     @git_status = Dir.chdir(@dir) do
+      `git fetch --all`
       `git status`
     end
   end
